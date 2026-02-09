@@ -1,36 +1,35 @@
-# INF249 – Attack Lab (MA2, “ma3”)
+# INF249 – Attack Lab (MA2)
 
-Dette prosjektet er fra **INF249 – Nettverkssikkerhet (UiB)** og er en praktisk 
-penetrasjonstest-lab i et lukket virtuelt miljø.
+This project is a practical penetration testing assignment from  
+**INF249 – Network Security (University of Bergen).**
 
 ## Scenario
-Målet var å finne en skjult flagg (`FLAG{...}`) på en målmaskin i samme nettverk som en 
-inngangsmaskin (“entrypoint”). Arbeidet fulgte en realistisk angrepskjede:
+The goal was to locate a hidden flag (`FLAG{...}`) on a target machine in a
+simulated internal network, starting only from an entry point VM.
 
-## Hva jeg gjorde
-- **Nettverksrekognosering**
-  - Fant IP-adressen til målmaskinen.
-  - Skannet tjenester med nmap for å kartlegge åpne porter og tjenester.
+## What I did (high-level)
+- **Network reconnaissance**
+  - Used `arp-scan` to identify live hosts and determine the gateway vs. target.
+  - Mapped services with `nmap -sV` (FTP, SSH, HTTP).
 
-- **Initial tilgang**
-  - Identifiserte en feilkonfigurert tjeneste som ga fotfeste på systemet.
-  - Oppnådde første shell på målmaskinen.
+- **Initial access**
+  - Exploited **anonymous FTP** misconfiguration to upload a PHP payload.
+  - Triggered the payload via HTTP to obtain a **reverse shell** as `www-data`.
 
 - **Post-exploitation**
-  - Enumererte brukerkontoer på systemet.
-  - Hentet ut passord-hasher fra maskinen.
-  - Knekket svake passord med passende verktøy.
+  - Enumerated users via `/home`.
+  - Leveraged a misconfigured **SUID binary (`/usr/bin/diff`)** to read `/etc/shadow`.
+  - Cracked weak hashes offline using **John the Ripper**.
 
 - **Privilege escalation**
-  - Fikk tilgang til konto med sudo-rettigheter.
-  - Navigerte til riktig hjemmekatalog og hentet flagget.
+  - Discovered credentials in a user script and switched to a sudo user.
+  - Used recursive search to locate the hidden flag in another user’s home directory.
 
-## Verktøy
-- Linux CLI
-- nmap  
-- SSH  
-- Passordknekking (f.eks. John the Ripper / hashcat)  
-- Standard enumeration-teknikker
+## Tools
+- Linux CLI, nmap, netcat, FTP, HTTP
+- John the Ripper (offline cracking)
+- Standard enumeration and privilege escalation techniques
 
-## Dokumentasjon
-Full rapport: `report/INF249_MA2_attack_lab.pdf`
+## Documentation
+Full report: `report/INF249_MA2_attack_lab.pdf`
+
